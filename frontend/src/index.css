@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  :root {
+    --background: 210 50% 98%;
+    --foreground: 220 40% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 40% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 40% 13%;
+
+    --primary: 213 94% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 220 40% 13%;
+
+    --muted: 210 30% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 38 92% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 213 94% 48%;
+
+    --radius: 0.75rem;
+
+    --sky-start: 213 94% 20%;
+    --sky-mid: 213 90% 40%;
+    --sky-end: 200 80% 65%;
+    --sky-light: 200 70% 85%;
+    --gold: 38 92% 55%;
+    --navy: 220 60% 12%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* 🔥 COMPONENT STYLES */
+@layer components {
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-border 
+    bg-white/80 backdrop-blur-md text-foreground 
+    placeholder:text-muted-foreground 
+    focus:outline-none focus:ring-2 focus:ring-primary/50 
+    transition-all;
+  }
+
+  .btn {
+    @apply bg-primary text-white px-5 py-3 rounded-lg font-semibold 
+    shadow-md hover:shadow-xl hover:scale-[1.02] 
+    active:scale-[0.97] transition-all duration-200;
+  }
+}
+
+/* 🔥 UTILITIES */
+@layer utilities {
+  .glass {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+
+  .glass-dark {
+    @apply bg-navy/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .gradient-sky {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--sky-start)),
+      hsl(var(--sky-mid)),
+      hsl(var(--sky-end))
+    );
+  }
+
+  .gradient-sky-light {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--sky-end)),
+      hsl(var(--sky-light))
+    );
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--accent))
+    );
+  }
+
+  /* 🔥 ✅ ONLY SEARCH BOX DATE FIX */
+  .custom-date input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    display: none;
+  }
+
+  .custom-date input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* 🔥 ANIMATIONS */
+
+@keyframes fly-plane {
+  0% { transform: translateX(-120%) translateY(5px) rotate(-1deg); }
+  25% { transform: translateX(25vw) translateY(-8px) rotate(1deg); }
+  50% { transform: translateX(50vw) translateY(3px) rotate(-0.5deg); }
+  75% { transform: translateX(75vw) translateY(-5px) rotate(1.5deg); }
+  100% { transform: translateX(120vw) translateY(5px) rotate(0deg); }
+}
+
+@keyframes fly-plane-trail {
+  0% { transform: translateX(-120%); }
+  25% { transform: translateX(25vw); }
+  50% { transform: translateX(50vw); }
+  75% { transform: translateX(75vw); }
+  100% { transform: translateX(120vw); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px hsl(var(--primary) / 0.4); }
+  50% {
+    box-shadow:
+      0 0 25px hsl(var(--primary) / 0.7),
+      0 0 50px hsl(var(--primary) / 0.3);
+  }
+}
+
+/* 🔥 ANIMATION CLASSES */
+
+.animate-fly-plane {
+  animation: fly-plane 3s ease-in-out infinite;
+}
+
+.animate-fly-plane-trail {
+  animation: fly-plane-trail 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
