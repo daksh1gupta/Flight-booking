@@ -10,12 +10,11 @@ const TicketPage = () => {
 
   const [data, setData] = useState<any>(location.state || null);
 
-  // 🔥 FETCH FROM BACKEND IF OPENED VIA URL
   useEffect(() => {
     if (!data && pnr) {
       const fetchTicket = async () => {
         try {
-          const res = await fetch("http://192.168.1.113:5000/api/bookings");
+          const res = await fetch("http://10.245.177.174:5000/api/bookings"); // ✅ HARD CODED
           const bookings = await res.json();
 
           const ticket = bookings.find((b: any) => b.pnr === pnr);
@@ -90,9 +89,8 @@ const TicketPage = () => {
             <p className="text-xl font-bold text-blue-600">₹{data.price}</p>
           </div>
 
-          {/* 🔥 QR CODE WITH URL */}
           <QRCodeCanvas
-            value={`http://192.168.1.113:8080/ticket/${data.pnr}`}
+            value={`http://10.245.177.174:8080/ticket/${data.pnr}`} // ✅ HARD CODED
             size={80}
           />
         </div>
