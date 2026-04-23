@@ -36,6 +36,7 @@ const App = () => (
 
           {/* Ticket Page */}
           <Route path="/ticket" element={<TicketPage />} />
+          <Route path="/ticket/:pnr" element={<TicketPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

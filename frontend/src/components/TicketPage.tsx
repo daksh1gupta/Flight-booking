@@ -1,15 +1,36 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import { airports } from "@/data/airports";
+import { useEffect, useState } from "react";
 
 const TicketPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { pnr } = useParams();
 
-  const data = location.state;
+  const [data, setData] = useState<any>(location.state || null);
+
+  // 🔥 FETCH FROM BACKEND IF OPENED VIA URL
+  useEffect(() => {
+    if (!data && pnr) {
+      const fetchTicket = async () => {
+        try {
+          const res = await fetch("http://192.168.1.113:5000/api/bookings");
+          const bookings = await res.json();
+
+          const ticket = bookings.find((b: any) => b.pnr === pnr);
+          setData(ticket);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      fetchTicket();
+    }
+  }, [pnr, data]);
 
   if (!data) {
-    return <div className="p-10 text-center">No Ticket Found ❌</div>;
+    return <div className="p-10 text-center">Loading Ticket...</div>;
   }
 
   const getCityName = (code: string) => {
@@ -68,8 +89,10 @@ const TicketPage = () => {
             <p className="text-gray-500 text-sm">Price</p>
             <p className="text-xl font-bold text-blue-600">₹{data.price}</p>
           </div>
+
+          {/* 🔥 QR CODE WITH URL */}
           <QRCodeCanvas
-            value={`${data.pnr}-${data.name}-${data.from}-${data.to}`}
+            value={`http://192.168.1.113:8080/ticket/${data.pnr}`}
             size={80}
           />
         </div>
