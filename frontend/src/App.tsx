@@ -8,9 +8,10 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import FlightsPage from "@/components/FlightsPage";
 import ProfilePage from "@/components/ProfilePage";
-import MyBookingsPage from "@/components/MyBookingsPage"; // ✅ ADD
+import MyBookingsPage from "@/components/MyBookingsPage";
 import BookingPage from "@/components/BookingPage";
 import TicketPage from "@/components/TicketPage";
+import PaymentSuccessPage from "@/components/PaymentSuccessPage"; // 🔥 NEW
 
 const queryClient = new QueryClient();
 
@@ -25,16 +26,19 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/flights" element={<FlightsPage />} />
 
-          {/* 🔥 PROFILE */}
+          {/* PROFILE */}
           <Route path="/profile" element={<ProfilePage />} />
 
-          {/* 🔥 MY BOOKINGS */}
+          {/* MY BOOKINGS */}
           <Route path="/bookings" element={<MyBookingsPage />} />
 
-          {/* Booking System Page */}
+          {/* BOOKING */}
           <Route path="/booking" element={<BookingPage />} />
 
-          {/* Ticket Page */}
+          {/* PAYMENT SUCCESS */}
+          <Route path="/payment-success" element={<PaymentSuccessPage />} />
+
+          {/* TICKET */}
           <Route path="/ticket" element={<TicketPage />} />
           <Route path="/ticket/:pnr" element={<TicketPage />} />
 

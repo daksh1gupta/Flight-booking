@@ -13,12 +13,22 @@ const bookingSchema = new mongoose.Schema({
   arrival: Date,
 
   price: Number,
-  pnr: String,
+
+  pnr: {
+    type: String,
+    unique: true,
+  },
+
+  paymentStatus: {
+    type: String,
+    default: "Pending",
+  },
 
   status: {
     type: String,
-    default: "Booked",
+    default: "Pending",
   },
+
 }, { timestamps: true });
 
 export default mongoose.model("Booking", bookingSchema);

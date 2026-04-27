@@ -7,7 +7,7 @@ const API_URL = "http://localhost:5000/api/flights";
 const FlightsPage = () => {
   const [flights, setFlights] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
-  const [priceLimit, setPriceLimit] = useState(7000);
+  const [priceLimit, setPriceLimit] = useState(10000); // 🔥 improved
   const [airline, setAirline] = useState("All");
   const [loading, setLoading] = useState(true);
 
@@ -18,22 +18,23 @@ const FlightsPage = () => {
 
   const from = query.get("from") || "DEL";
   const to = query.get("to") || "BOM";
-  const passengers = Number(query.get("passengers")) || 1;
 
-  // 🔥 FETCH API
+  // 🔥 FETCH API (clean + safe)
   useEffect(() => {
     const fetchFlights = async () => {
       try {
         setLoading(true);
 
         const res = await fetch(
-          `${API_URL}?from=${from}&to=${to}&date=2026-05-01&passengers=${passengers}`
+          `${API_URL}?from=${from}&to=${to}`
         );
 
         const data = await res.json();
 
-        setFlights(data);
-        setFiltered(data);
+        console.log("FRONTEND DATA:", data);
+
+        setFlights(data || []);
+        setFiltered(data || []);
       } catch (err) {
         console.log(err);
       } finally {
@@ -42,14 +43,20 @@ const FlightsPage = () => {
     };
 
     fetchFlights();
-  }, [from, to, passengers]);
+  }, [from, to]);
 
-  // 🔥 FILTER
+  // 🔥 FILTER LOGIC (robust)
   useEffect(() => {
-    let updated = flights.filter((f) => Number(f.price) <= priceLimit);
+    let updated = [...flights];
 
+    // price filter
+    updated = updated.filter((f) => Number(f.price) <= priceLimit);
+
+    // airline filter (case insensitive)
     if (airline !== "All") {
-      updated = updated.filter((f) => f.airline?.includes(airline));
+      updated = updated.filter((f) =>
+        f.airline?.toLowerCase().includes(airline.toLowerCase())
+      );
     }
 
     setFiltered(updated);
@@ -63,7 +70,10 @@ const FlightsPage = () => {
     });
   };
 
-  // 🔥 SKELETON CARD
+  // 🔥 DYNAMIC AIRLINES
+  const airlines = ["All", ...new Set(flights.map((f) => f.airline))];
+
+  // 🔥 SKELETON
   const SkeletonCard = () => (
     <div className="bg-white/70 rounded-2xl p-7 shadow-lg space-y-4 animate-pulse">
       <div className="h-5 w-32 rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200"></div>
@@ -89,6 +99,7 @@ const FlightsPage = () => {
         <div className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-md p-6 h-fit sticky top-6">
           <h2 className="font-bold text-xl mb-5 text-gray-800">Filters</h2>
 
+          {/* PRICE */}
           <div className="mb-6">
             <p className="text-base font-semibold mb-2">
               Max Price: ₹{priceLimit}
@@ -97,13 +108,14 @@ const FlightsPage = () => {
             <input
               type="range"
               min="3000"
-              max="8000"
+              max="10000"
               value={priceLimit}
               onChange={(e) => setPriceLimit(Number(e.target.value))}
               className="w-full accent-blue-600"
             />
           </div>
 
+          {/* 🔥 DYNAMIC AIRLINES */}
           <div>
             <p className="text-base font-semibold mb-2">Airline</p>
 
@@ -111,10 +123,11 @@ const FlightsPage = () => {
               onChange={(e) => setAirline(e.target.value)}
               className="w-full p-3 rounded-xl border focus:ring-2 focus:ring-blue-400"
             >
-              <option value="All">All</option>
-              <option value="IndiGo">IndiGo</option>
-              <option value="Air India">Air India</option>
-              <option value="Vistara">Vistara</option>
+              {airlines.map((a, i) => (
+                <option key={i} value={a}>
+                  {a}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -122,7 +135,7 @@ const FlightsPage = () => {
         {/* FLIGHTS */}
         <div className="lg:col-span-3 space-y-6">
 
-          {/* 🔥 SKELETON LOADER */}
+          {/* LOADING */}
           {loading && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[1,2,3,4,5,6].map((_, i) => (
@@ -131,14 +144,21 @@ const FlightsPage = () => {
             </div>
           )}
 
-          {/* EMPTY */}
-          {!loading && filtered.length === 0 && (
-            <div className="text-center text-gray-400 text-lg">
-              No flights found 😢
+          {/* NO API DATA */}
+          {!loading && flights.length === 0 && (
+            <div className="text-center text-red-500 text-lg">
+              ❌ No flights from API
             </div>
           )}
 
-          {/* REAL DATA */}
+          {/* FILTER EMPTY */}
+          {!loading && flights.length > 0 && filtered.length === 0 && (
+            <div className="text-center text-orange-500 text-lg">
+              ⚠️ Flights exist but filtered out (increase price or change airline)
+            </div>
+          )}
+
+          {/* DATA */}
           {!loading &&
             filtered.map((flight, i) => (
               <div

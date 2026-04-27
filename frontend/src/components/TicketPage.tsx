@@ -10,14 +10,16 @@ const TicketPage = () => {
 
   const [data, setData] = useState<any>(location.state || null);
 
+  // 🔥 FETCH FROM BACKEND
   useEffect(() => {
     if (!data && pnr) {
       const fetchTicket = async () => {
         try {
-          const res = await fetch("http://10.245.177.174:5000/api/bookings"); // ✅ HARD CODED
-          const bookings = await res.json();
+          const res = await fetch(
+            `http://localhost:5000/api/bookings/${pnr}` // 🔥 BETTER API
+          );
+          const ticket = await res.json();
 
-          const ticket = bookings.find((b: any) => b.pnr === pnr);
           setData(ticket);
         } catch (err) {
           console.log(err);
@@ -33,7 +35,7 @@ const TicketPage = () => {
   }
 
   const getCityName = (code: string) => {
-    const airport = airports.find(a => a.code === code);
+    const airport = airports.find((a) => a.code === code);
     return airport ? `${airport.city} (${code})` : code;
   };
 
@@ -89,8 +91,9 @@ const TicketPage = () => {
             <p className="text-xl font-bold text-blue-600">₹{data.price}</p>
           </div>
 
+          {/* 🔥 QR CODE */}
           <QRCodeCanvas
-            value={`http://10.245.177.174:8080/ticket/${data.pnr}`} // ✅ HARD CODED
+            value={`http://localhost:8080/ticket/${data.pnr}`} // 🔥 FIXED
             size={80}
           />
         </div>

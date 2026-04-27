@@ -4,30 +4,27 @@ export const getFlights = async (req, res) => {
   try {
     const { from, to } = req.query;
 
-    // ✅ ONLY dep_iata use karo
     const response = await fetch(
       `http://api.aviationstack.com/v1/flights?access_key=${process.env.AVIATION_API_KEY}&dep_iata=${from}`
     );
 
     const data = await response.json();
 
-    console.log("API RESPONSE:", data);
+    console.log("API DATA:", data);
 
     // ❌ API ERROR
-    if (data.success === false) {
+    if (data.error) {
       return res.status(400).json({
-        error: data.error?.type,
-        message: data.error?.info,
+        message: data.error.message,
       });
     }
 
-    if (!data.data) {
-      return res.status(500).json({
-        message: "Invalid API response",
-      });
+    // ❌ NO DATA
+    if (!data.data || data.data.length === 0) {
+      return res.json([]);
     }
 
-    // 🔥 FILTER BY DESTINATION
+    // ✅ FILTER BY DESTINATION
     const flights = data.data
       .filter((f) => f.arrival?.iata === to)
       .slice(0, 12)
@@ -42,20 +39,15 @@ export const getFlights = async (req, res) => {
         price: Math.floor(Math.random() * 4000) + 3000,
       }));
 
-    // ❌ STILL EMPTY
+    // ❌ NO MATCH FOUND
     if (flights.length === 0) {
-      return res.status(404).json({
-        message: "Flights exist but not matching destination",
-      });
+      return res.json([]);
     }
 
     res.json(flights);
 
   } catch (error) {
-    console.error("🔥 SERVER ERROR:", error.message);
-
-    res.status(500).json({
-      error: "Server failed to fetch flights",
-    });
+    console.error("🔥 Flight API Error:", error.message);
+    res.status(500).json({ message: "Failed to fetch flights" });
   }
 };

@@ -6,7 +6,8 @@ import connectDB from "./config/db.js";
 // routes
 import flightRoutes from "./routes/flightRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
-import bookingRoutes from "./routes/bookingRoutes.js"; // 🔥 NEW
+import bookingRoutes from "./routes/bookingRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js"; // 🔥 ADD THIS
 
 dotenv.config();
 
@@ -22,7 +23,10 @@ connectDB();
 // routes
 app.use("/api", flightRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/bookings", bookingRoutes); // 🔥 NEW ROUTE
+app.use("/api/bookings", bookingRoutes);
+
+// 🔥 PAYMENT ROUTE
+app.use("/api/payment", paymentRoutes);
 
 // test route
 app.get("/", (req, res) => {
